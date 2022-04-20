@@ -4,15 +4,18 @@ import axios, {} from 'axios';
 import Onedata from './Onedata'
 const Alldata = ({socket}) => {
   const [userarr, setuarr] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(()=>{
       axios.get(process.env.REACT_APP_GETUSER,{
           headers:{
-              'Content-Type':"application/json"
+            'Content-Type':"application/json"
           }
       }).then(res=>{
           console.log(res);
           setuarr([...res.data.total_user])
-      }).catch(err=>{
+          setLoading(false);
+        }).catch(err=>{
+          setLoading(false);
           console.log(err)
       })
   },[])
@@ -28,13 +31,20 @@ const Alldata = ({socket}) => {
   return (
     <Box>
       <Stack>
-        <Typography variant='h3'>All Data: </Typography>
+        <Typography variant='h3' textAlign={'center'}>All Users </Typography>
         <Stack rowGap={2} px={3}>
-          {userarr && userarr.length>0 ? (userarr.map(udata=>(
-            <Onedata userdata={udata}/>
-          )))
+          {loading?
+          <>
+            <Typography variant={'h5'}>Loading... </Typography>
+          </>
           :
-          <Typography variant={'h5'}>No data</Typography>
+          userarr && userarr.length>0 ?
+           (userarr.map(udata=>(
+            <Onedata userdata={udata}/>
+            )))
+            :
+            <Typography variant={'h5'}>No data</Typography>
+          
         }
         </Stack>
       </Stack>

@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
-import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import Stack from '@mui/material/Stack';
+import { Box, Button, TextField, Typography } from '@mui/material'
 import axios, {} from 'axios';
 const Form = ({socket}) => {
     const [data, setData] = useState({});
+    const [loading, setLoading] = useState(false);
+
     const datahandler = (e)=>{
         setData(prev=>({
             ...prev,
@@ -10,6 +13,7 @@ const Form = ({socket}) => {
         }))
     }
     const submithandler = (e)=>{
+        setLoading(true);
         e.preventDefault();
         axios.post(process.env.REACT_APP_CREATEUSER,data, {
             headers:{
@@ -17,15 +21,17 @@ const Form = ({socket}) => {
             }
         }).then(res=>{
             setData({});
-            // console.log(res);
+            setLoading(false);
             socket.current.emit("sent_data", (res.data && res.data.added_user)?res.data.added_user:res.data);
-
+            
+            
         }).catch(err=>{
+            setLoading(false);
             console.log(err);
         })
     }
   return (
-    <Box sx={{position:{xs:"static",md:"fixed"}}}>
+    <Box sx={{position:{xs:"static",md:"fixed"},top:{xs:'5%',md:"15%"}, width:{xs:"100%",md:"30%"}}}>
         <Typography variant='h3' textAlign={'center'} my={1}>Add Data</Typography>
         <Stack rowGap={3} m={2} >
             <TextField id="outlined-basic" label="Name" value={data.name || ""} onChange={e=>datahandler(e)} name='name' variant="outlined" />
@@ -33,7 +39,12 @@ const Form = ({socket}) => {
             <TextField id="outlined-basic" label="Address" value={data.address || ""} onChange={e=>datahandler(e)} name='address' variant="outlined" />
             <TextField id="outlined-basic" label="Age" value={data.age || ""} onChange={e=>datahandler(e)} name='age' variant="outlined" />
             <TextField id="outlined-basic" label="Occupation" value={data.occupation || ""} onChange={e=>datahandler(e)} name='occupation' variant="outlined" />
-            <Button variant='contained' onClick={e=>submithandler(e)}>Add Data</Button>
+            <Button variant='contained' disabled={loading && true} onClick={e=>{
+                if(!loading){
+                    submithandler(e)
+                }
+            }}>{loading?"LOADING... ":"SAVE"}</Button>
+
         </Stack>
     </Box>
   )

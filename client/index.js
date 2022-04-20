@@ -8,9 +8,9 @@ var cors = require('cors');
 const User = require('./models/userModel');
 app.use(cors());
 app.use(express.json());
-// CREATE REQUEST FOR USER: @POST /api/user/create
+
 app.post("/api/user/create", async function(req, res){
-    udata = req.body;
+    let udata = req.body;
     if(!udata.name && !udata.email && !udata.age && !udata.occupation && !udata.address){
         res.status(400).json({
             status:"error",
@@ -25,8 +25,6 @@ app.post("/api/user/create", async function(req, res){
     }
 })
 
-// GET REQUEST FOR ALL_USERs: @GET /api/user/getall
-
 
 app.get("/api/user/getall", async function(req, res){
     let founduser = await (await User.find({})).reverse();
@@ -37,19 +35,29 @@ app.get("/api/user/getall", async function(req, res){
     
 })
 
+// ... other imports 
+const path = require("path")
 
+// ... other app.use middleware 
+app.use(express.static(path.join(__dirname, "build")))
 
-const port=  process.env.port || 3000;
+// ...
+// Right before your app.listen(), add this:
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname,  "build", "index.html"));
+});
 app.use("/", function(req, res){
     res.status(404).json({
-        "message":`No routes with url http://localhost:5000${req.url} exists!`,
+        "message":`No routes with url http://localhost:${process.env.PORT}${req.url} exists!`,
         "request":"Sorry"
     })
 })
 
+const port=  process.env.PORT || 3000;
+
 
 const server = http.createServer(app);
-// INITIALIZING SOCKET REQUEST
+
 const {Server} = require('socket.io')
 const io = new Server(server,{
     cors:{
