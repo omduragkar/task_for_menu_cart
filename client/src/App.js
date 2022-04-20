@@ -7,7 +7,9 @@ import io from 'socket.io-client'
 const App = () => {
   const socket = useRef();
   useEffect(()=>{
-    socket.current = io.connect("http://localhost:5000");
+    
+    socket.current = io.connect(process.env.REACT_APP_SOCKET_URL);
+    console.log(socket.current, process.env.REACT_APP_SOCKET_URL);
   },[])
   return (
     <Grid container>

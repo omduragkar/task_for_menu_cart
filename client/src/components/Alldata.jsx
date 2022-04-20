@@ -5,7 +5,7 @@ import Onedata from './Onedata'
 const Alldata = ({socket}) => {
   const [userarr, setuarr] = useState([]);
   useEffect(()=>{
-      axios.get('http://localhost:5000/api/user/getall',{
+      axios.get(process.env.REACT_APP_GETUSER,{
           headers:{
               'Content-Type':"application/json"
           }

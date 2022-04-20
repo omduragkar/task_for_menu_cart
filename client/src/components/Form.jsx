@@ -11,7 +11,7 @@ const Form = ({socket}) => {
     }
     const submithandler = (e)=>{
         e.preventDefault();
-        axios.post("http://localhost:5000/api/user/create",data, {
+        axios.post(process.env.REACT_APP_CREATEUSER,data, {
             headers:{
                 'Content-Type':"application/json"
             }
