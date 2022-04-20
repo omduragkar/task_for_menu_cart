@@ -67,7 +67,7 @@ server.listen(port, (err)=>{
 io.on('connection', (socket)=>{
     console.log('User connected on: ', socket.id);
     socket.on('sent_data', function(data){
-        console.log(data);
+        // console.log(data);
         io.emit("recieve", data);
     })
 })
